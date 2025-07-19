@@ -500,16 +500,51 @@ function App() {
 
           <div className="media-container">
             {(selectedMode === "easy" || selectedMode === "medium") && currentLocation && (
-              <div className="street-view-container">
+              <div className="location-view-container">
+                {/* Try street view first */}
                 <iframe
                   width="100%"
                   height="400"
                   frameBorder="0"
-                  style={{ border: 0 }}
+                  style={{ border: 0, marginBottom: '10px' }}
                   src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&location=${currentLocation.lat},${currentLocation.lng}&heading=210&pitch=10`}
                   allowFullScreen
                   title="Street View"
+                  onLoad={(e) => {
+                    console.log("Street view loaded successfully");
+                    // Hide the fallback when street view loads
+                    const fallback = e.target.parentNode.querySelector('.fallback-map');
+                    if (fallback) fallback.style.display = 'none';
+                  }}
                 />
+                {/* Fallback static map */}
+                <div className="fallback-map" style={{ 
+                  padding: '10px', 
+                  background: '#f0f0f0', 
+                  fontSize: '12px', 
+                  color: '#666',
+                  textAlign: 'center',
+                  marginTop: '10px'
+                }}>
+                  <p>Street view not available for this location.</p>
+                  <img 
+                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.lat},${currentLocation.lng}&zoom=15&size=600x400&maptype=roadmap&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
+                    alt="Location map"
+                    style={{ width: '100%', maxWidth: '600px', height: 'auto' }}
+                    onError={(e) => {
+                      console.log("Static map also failed, showing location image");
+                      e.target.style.display = 'none';
+                      // Show a location image as final fallback
+                      const locationImage = document.createElement('img');
+                      locationImage.src = currentLocation.images[0];
+                      locationImage.alt = "Location";
+                      locationImage.style.width = '100%';
+                      locationImage.style.maxWidth = '600px';
+                      locationImage.style.height = 'auto';
+                      e.target.parentNode.appendChild(locationImage);
+                    }}
+                  />
+                </div>
               </div>
             )}
             {(selectedMode === "hard" || selectedMode === "impossible") && media && (

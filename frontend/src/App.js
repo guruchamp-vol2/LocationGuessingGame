@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getAllLocations, getLocationsByRegion } from "./locations";
 import "./App.css";
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const modes = [
   { key: "easy", label: "Easy", description: "5-minute video + hints", difficulty: 1 },
@@ -132,6 +134,16 @@ function TeamChat({ teamId, playerName }) {
       <button onClick={sendMessage}>Send</button>
     </div>
   );
+}
+
+// Map click handler component
+function GuessMap({ onGuess, guess }) {
+  useMapEvents({
+    click(e) {
+      onGuess({ lat: e.latlng.lat, lng: e.latlng.lng });
+    }
+  });
+  return guess.lat !== 0 ? <Marker position={[guess.lat, guess.lng]} /> : null;
 }
 
 // --- Main App ---
@@ -498,36 +510,18 @@ function App() {
 
           <div className="map-container">
             <h3>Click on the map to make your guess:</h3>
-            <div 
-              className="world-map"
-              onClick={handleMapClick}
-              style={{
-                width: '100%',
-                height: '300px',
-                background: 'linear-gradient(45deg, #87CEEB, #98FB98)',
-                border: '2px solid #333',
-                borderRadius: '8px',
-                cursor: 'crosshair',
-                position: 'relative'
-              }}
+            <MapContainer
+              center={[20, 0]}
+              zoom={2}
+              style={{ width: '100%', height: '300px', border: '2px solid #333', borderRadius: '8px' }}
+              scrollWheelZoom={true}
             >
-              {userGuess.lat !== 0 && (
-                <div
-                  className="guess-marker"
-                  style={{
-                    position: 'absolute',
-                    left: `${((userGuess.lng + 180) / 360) * 100}%`,
-                    top: `${((90 - userGuess.lat) / 180) * 100}%`,
-                    width: '12px',
-                    height: '12px',
-                    backgroundColor: 'red',
-                    borderRadius: '50%',
-                    border: '2px solid white',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                />
-              )}
-            </div>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+              <GuessMap onGuess={setUserGuess} guess={userGuess} />
+            </MapContainer>
           </div>
 
           <div className="game-controls">
@@ -749,36 +743,18 @@ function App() {
 
           <div className="map-container">
             <h3>Click on the map to make your guess:</h3>
-            <div 
-              className="world-map"
-              onClick={handleMapClick}
-              style={{
-                width: '100%',
-                height: '300px',
-                background: 'linear-gradient(45deg, #87CEEB, #98FB98)',
-                border: '2px solid #333',
-                borderRadius: '8px',
-                cursor: 'crosshair',
-                position: 'relative'
-              }}
+            <MapContainer
+              center={[20, 0]}
+              zoom={2}
+              style={{ width: '100%', height: '300px', border: '2px solid #333', borderRadius: '8px' }}
+              scrollWheelZoom={true}
             >
-              {userGuess.lat !== 0 && (
-                <div
-                  className="guess-marker"
-                  style={{
-                    position: 'absolute',
-                    left: `${((userGuess.lng + 180) / 360) * 100}%`,
-                    top: `${((90 - userGuess.lat) / 180) * 100}%`,
-                    width: '12px',
-                    height: '12px',
-                    backgroundColor: 'red',
-                    borderRadius: '50%',
-                    border: '2px solid white',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                />
-              )}
-            </div>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+              <GuessMap onGuess={setUserGuess} guess={userGuess} />
+            </MapContainer>
           </div>
 
           <div className="game-controls">

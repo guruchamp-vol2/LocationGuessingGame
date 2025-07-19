@@ -488,6 +488,17 @@ function App() {
                 muted
                 className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
                 src={media}
+                onError={(e) => {
+                  console.log("Video failed to load:", media);
+                  e.target.style.display = 'none';
+                  // Show fallback message
+                  const fallback = document.createElement('div');
+                  fallback.innerHTML = '<p>Video not available. Please use image mode instead.</p>';
+                  fallback.style.padding = '20px';
+                  fallback.style.textAlign = 'center';
+                  fallback.style.color = '#666';
+                  e.target.parentNode.appendChild(fallback);
+                }}
               >
                 Your browser does not support the video tag.
               </video>
@@ -497,6 +508,17 @@ function App() {
                 src={media}
                 alt="Location to guess"
                 className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
+                onError={(e) => {
+                  console.log("Image failed to load:", media);
+                  e.target.style.display = 'none';
+                  // Show fallback message
+                  const fallback = document.createElement('div');
+                  fallback.innerHTML = '<p>Image not available. Please try again.</p>';
+                  fallback.style.padding = '20px';
+                  fallback.style.textAlign = 'center';
+                  fallback.style.color = '#666';
+                  e.target.parentNode.appendChild(fallback);
+                }}
               />
             )}
           </div>
@@ -721,6 +743,17 @@ function App() {
                 muted
                 className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
                 src={media}
+                onError={(e) => {
+                  console.log("Video failed to load:", media);
+                  e.target.style.display = 'none';
+                  // Show fallback message
+                  const fallback = document.createElement('div');
+                  fallback.innerHTML = '<p>Video not available. Please use image mode instead.</p>';
+                  fallback.style.padding = '20px';
+                  fallback.style.textAlign = 'center';
+                  fallback.style.color = '#666';
+                  e.target.parentNode.appendChild(fallback);
+                }}
               >
                 Your browser does not support the video tag.
               </video>
@@ -730,6 +763,17 @@ function App() {
                 src={media}
                 alt="Location to guess"
                 className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
+                onError={(e) => {
+                  console.log("Image failed to load:", media);
+                  e.target.style.display = 'none';
+                  // Show fallback message
+                  const fallback = document.createElement('div');
+                  fallback.innerHTML = '<p>Image not available. Please try again.</p>';
+                  fallback.style.padding = '20px';
+                  fallback.style.textAlign = 'center';
+                  fallback.style.color = '#666';
+                  e.target.parentNode.appendChild(fallback);
+                }}
               />
             )}
           </div>

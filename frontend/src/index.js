@@ -4,14 +4,16 @@ import './index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import * as Ably from 'ably';
 import { AblyProvider } from 'ably/react';
 
 const ablyApiKey = process.env.REACT_APP_ABLY_API_KEY;
+const ablyClient = new Ably.Realtime.Promise(ablyApiKey);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AblyProvider clientOptions={{ key: ablyApiKey }}>
+    <AblyProvider client={ablyClient}>
       <App />
     </AblyProvider>
   </React.StrictMode>

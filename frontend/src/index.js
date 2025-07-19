@@ -22,9 +22,7 @@ root.render(
         <App />
       </AblyProvider>
     ) : (
-      <div style={{color: 'red', padding: 40, fontSize: 24}}>
-        ERROR: Ably API key is missing. Please add REACT_APP_ABLY_API_KEY to your .env file in the frontend directory and rebuild.
-      </div>
+      <App />
     )}
   </React.StrictMode>
 );

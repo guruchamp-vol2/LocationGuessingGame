@@ -11,7 +11,7 @@ const ablyApiKey = process.env.REACT_APP_ABLY_API_KEY;
 
 let ablyClient = null;
 if (ablyApiKey) {
-  ablyClient = new Ably.Realtime.Promise(ablyApiKey);
+  ablyClient = new Ably.Realtime({ key: ablyApiKey });
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

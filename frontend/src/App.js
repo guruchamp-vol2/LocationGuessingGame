@@ -696,6 +696,7 @@ function App() {
 
   // Render game screen
   if (stage === "game") {
+    const media = getCurrentMedia();
     return (
       <div className="App">
         <div className="game-container">

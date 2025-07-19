@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const modes = [
-  { key: "easy", label: "Easy", description: "5-minute video + hints", difficulty: 1 },
+  { key: "easy", label: "Easy", description: "Street view + hints", difficulty: 1 },
   { key: "medium", label: "Medium", description: "Street view + some hints", difficulty: 2 },
   { key: "hard", label: "Hard", description: "Single image only", difficulty: 3 },
   { key: "impossible", label: "Impossible", description: "Blurred image + no hints", difficulty: 4 }
@@ -356,7 +356,8 @@ function App() {
     
     switch(selectedMode) {
       case "easy":
-        return currentLocation.videos[currentMediaIndex % currentLocation.videos.length];
+        // Use street view for easy mode instead of non-location-specific videos
+        return null; // Street view will be handled in the render
       case "medium":
         return currentLocation.images[currentMediaIndex % currentLocation.images.length];
       case "hard":
@@ -498,29 +499,7 @@ function App() {
           </div>
 
           <div className="media-container">
-            {selectedMode === "easy" && media && (
-              <video
-                controls
-                autoPlay
-                muted
-                className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
-                src={media}
-                onError={(e) => {
-                  console.log("Video failed to load:", media);
-                  e.target.style.display = 'none';
-                  // Show fallback message
-                  const fallback = document.createElement('div');
-                  fallback.innerHTML = '<p>Video not available. Please use image mode instead.</p>';
-                  fallback.style.padding = '20px';
-                  fallback.style.textAlign = 'center';
-                  fallback.style.color = '#666';
-                  e.target.parentNode.appendChild(fallback);
-                }}
-              >
-                Your browser does not support the video tag.
-              </video>
-            )}
-            {selectedMode === "medium" && currentLocation && (
+            {(selectedMode === "easy" || selectedMode === "medium") && currentLocation && (
               <div className="street-view-container">
                 <iframe
                   width="100%"

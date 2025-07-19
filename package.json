@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@ably/chat": "^0.10.0",
+    "ably": "^2.10.1"
+  }
+}

@@ -808,7 +808,8 @@ function App() {
     );
   }
 
-  return null;
+  // Fallback render for unknown state
+  return <div className="App"><h2>Loading or unknown state</h2></div>;
 }
 
 export default App;

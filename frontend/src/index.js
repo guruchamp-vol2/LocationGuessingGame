@@ -8,14 +8,24 @@ import * as Ably from 'ably';
 import { AblyProvider } from 'ably/react';
 
 const ablyApiKey = process.env.REACT_APP_ABLY_API_KEY;
-const ablyClient = new Ably.Realtime.Promise(ablyApiKey);
+
+let ablyClient = null;
+if (ablyApiKey) {
+  ablyClient = new Ably.Realtime.Promise(ablyApiKey);
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AblyProvider client={ablyClient}>
-      <App />
-    </AblyProvider>
+    {ablyClient ? (
+      <AblyProvider client={ablyClient}>
+        <App />
+      </AblyProvider>
+    ) : (
+      <div style={{color: 'red', padding: 40, fontSize: 24}}>
+        ERROR: Ably API key is missing. Please add REACT_APP_ABLY_API_KEY to your .env file in the frontend directory and rebuild.
+      </div>
+    )}
   </React.StrictMode>
 );
 

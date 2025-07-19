@@ -4,12 +4,12 @@
 
 // Helper function to generate multiple media sources for a city
 const generateMediaForCity = (cityName, country) => {
-  // Real working video URLs from Wikimedia Commons
+  // Simple, reliable video URLs that actually work
   const realVideos = [
-    "https://upload.wikimedia.org/wikipedia/commons/transcoded/8/8c/File%3A2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm/2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm.480p.webm",
-    "https://upload.wikimedia.org/wikipedia/commons/transcoded/8/8c/File%3A2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm/2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm.720p.webm",
-    "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/4c/File%3A2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm/2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm.360p.webm",
-    "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/2c/File%3A2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm/2019-05-15_15-30-00_Spain_Valencia_Plaza_de_la_Virgen.webm.240p.webm"
+    "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
   ];
   
   // Real working image URLs from Unsplash and Wikimedia Commons

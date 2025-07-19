@@ -140,6 +140,7 @@ function TeamChat({ teamId, playerName }) {
 function GuessMap({ onGuess, guess }) {
   useMapEvents({
     click(e) {
+      console.log("Map clicked at:", e.latlng);
       onGuess({ lat: e.latlng.lat, lng: e.latlng.lng });
     }
   });
@@ -292,7 +293,20 @@ function App() {
 
   // Submit guess
   const submitGuess = () => {
-    if (!currentLocation || userGuess.lat === 0) return;
+    console.log("Submit guess clicked!");
+    console.log("Current location:", currentLocation);
+    console.log("User guess:", userGuess);
+    
+    if (!currentLocation) {
+      console.log("No current location!");
+      return;
+    }
+    
+    if (userGuess.lat === 0) {
+      console.log("No user guess made!");
+      alert("Please click on the map to make a guess first!");
+      return;
+    }
     
     setIsTimerRunning(false);
     
@@ -309,6 +323,9 @@ function App() {
     const difficulty = modes.find(m => m.key === selectedMode)?.difficulty || 1;
     const roundScore = calculateScore(dist, difficulty);
     const aiRoundScore = calculateScore(aiDist, difficulty);
+    
+    console.log("Distance:", dist, "AI Distance:", aiDist);
+    console.log("Round score:", roundScore, "AI Round score:", aiRoundScore);
     
     setDistance(dist);
     setAiDistance(aiDist);
@@ -503,7 +520,20 @@ function App() {
                 Your browser does not support the video tag.
               </video>
             )}
-            {(selectedMode === "medium" || selectedMode === "hard" || selectedMode === "impossible") && media && (
+            {selectedMode === "medium" && currentLocation && (
+              <div className="street-view-container">
+                <iframe
+                  width="100%"
+                  height="400"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&location=${currentLocation.lat},${currentLocation.lng}&heading=210&pitch=10`}
+                  allowFullScreen
+                  title="Street View"
+                />
+              </div>
+            )}
+            {(selectedMode === "hard" || selectedMode === "impossible") && media && (
               <img
                 src={media}
                 alt="Location to guess"
@@ -553,12 +583,31 @@ function App() {
             >
               {showHint ? "Hide Hint" : "Show Hint"}
             </button>
+            {userGuess.lat !== 0 && (
+              <div style={{ 
+                background: '#e8f5e8', 
+                padding: '10px', 
+                borderRadius: '5px', 
+                margin: '10px 0',
+                border: '1px solid #4caf50'
+              }}>
+                ✅ Guess made at: {userGuess.lat.toFixed(4)}, {userGuess.lng.toFixed(4)}
+              </div>
+            )}
             <button
               className="submit-btn"
               disabled={userGuess.lat === 0}
               onClick={submitGuess}
+              style={{
+                backgroundColor: userGuess.lat === 0 ? '#ccc' : '#4caf50',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: userGuess.lat === 0 ? 'not-allowed' : 'pointer'
+              }}
             >
-              Submit Guess
+              {userGuess.lat === 0 ? "Click map first to guess" : "Submit Guess"}
             </button>
             <button className="back-btn" onClick={backToMenu}>
               Back to Menu

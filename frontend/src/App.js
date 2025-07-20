@@ -499,9 +499,9 @@ function App() {
           </div>
 
           <div className="media-container">
-            {(selectedMode === "easy" || selectedMode === "medium") && currentLocation && (
+            {currentLocation && media && (
               <div className="location-view-container">
-                {/* Show static map for Easy/Medium modes */}
+                {/* Show location image for all modes */}
                 <div style={{ 
                   padding: '10px', 
                   background: '#f0f0f0', 
@@ -510,27 +510,43 @@ function App() {
                   textAlign: 'center',
                   marginBottom: '10px'
                 }}>
-                  <p>Location Map View</p>
+                  <p>
+                    {selectedMode === "easy" && "Easy Mode: Clear view of the location"}
+                    {selectedMode === "medium" && "Medium Mode: Location view"}
+                    {selectedMode === "hard" && "Hard Mode: Challenging view"}
+                    {selectedMode === "impossible" && "Impossible Mode: Heavily blurred view"}
+                  </p>
                 </div>
-                <img 
-                  src={`https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.lat},${currentLocation.lng}&zoom=15&size=600x400&maptype=roadmap&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}
-                  alt="Location map"
-                  style={{ width: '100%', maxWidth: '600px', height: 'auto', border: '1px solid #ddd' }}
+                
+                <img
+                  src={media}
+                  alt="Location to guess"
+                  className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
+                  style={{ 
+                    width: '100%', 
+                    maxWidth: '600px', 
+                    height: 'auto', 
+                    border: '1px solid #ddd',
+                    borderRadius: '8px'
+                  }}
                   onError={(e) => {
-                    console.log("Static map failed, showing location image");
+                    console.log("Image failed to load:", media);
                     e.target.style.display = 'none';
-                    // Show a location image as fallback
-                    const locationImage = document.createElement('img');
-                    locationImage.src = currentLocation.images[0];
-                    locationImage.alt = "Location";
-                    locationImage.style.width = '100%';
-                    locationImage.style.maxWidth = '600px';
-                    locationImage.style.height = 'auto';
-                    locationImage.style.border = '1px solid #ddd';
-                    e.target.parentNode.appendChild(locationImage);
+                    // Show fallback with location name hint
+                    const fallback = document.createElement('div');
+                    fallback.innerHTML = `
+                      <div style="padding: 40px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px;">
+                        <h3>Image Loading...</h3>
+                        <p>Location: ${currentLocation.name}</p>
+                        <p>Region: ${currentLocation.region}</p>
+                        <p>Please try refreshing the page.</p>
+                      </div>
+                    `;
+                    e.target.parentNode.appendChild(fallback);
                   }}
                 />
-                {/* Additional location context */}
+                
+                {/* Additional hints based on mode */}
                 <div style={{ 
                   padding: '10px', 
                   background: '#f8f9fa', 
@@ -540,27 +556,20 @@ function App() {
                   marginTop: '10px',
                   borderRadius: '4px'
                 }}>
-                  <p><strong>Hint:</strong> Look at the map layout, street patterns, and landmarks to identify this location!</p>
+                  {selectedMode === "easy" && (
+                    <p><strong>Hint:</strong> Look for famous landmarks, architecture, and street signs!</p>
+                  )}
+                  {selectedMode === "medium" && (
+                    <p><strong>Hint:</strong> Focus on the city layout, buildings, and distinctive features!</p>
+                  )}
+                  {selectedMode === "hard" && (
+                    <p><strong>Hint:</strong> Pay attention to subtle details and architectural styles!</p>
+                  )}
+                  {selectedMode === "impossible" && (
+                    <p><strong>Hint:</strong> Even with blur, you can see shapes and general layout!</p>
+                  )}
                 </div>
               </div>
-            )}
-            {(selectedMode === "hard" || selectedMode === "impossible") && media && (
-              <img
-                src={media}
-                alt="Location to guess"
-                className={`game-media ${selectedMode === "impossible" ? "blurred" : ""}`}
-                onError={(e) => {
-                  console.log("Image failed to load:", media);
-                  e.target.style.display = 'none';
-                  // Show fallback message
-                  const fallback = document.createElement('div');
-                  fallback.innerHTML = '<p>Image not available. Please try again.</p>';
-                  fallback.style.padding = '20px';
-                  fallback.style.textAlign = 'center';
-                  fallback.style.color = '#666';
-                  e.target.parentNode.appendChild(fallback);
-                }}
-              />
             )}
           </div>
 

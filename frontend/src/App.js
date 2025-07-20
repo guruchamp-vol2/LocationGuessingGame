@@ -293,12 +293,11 @@ function App() {
 
   // Submit guess
   const submitGuess = () => {
-    console.log("Submit guess clicked!");
-    console.log("Current location:", currentLocation);
-    console.log("User guess:", userGuess);
+    console.log("Submit guess called");
     
     if (!currentLocation) {
       console.log("No current location!");
+      alert("No location loaded. Please try again.");
       return;
     }
     
@@ -308,6 +307,7 @@ function App() {
       return;
     }
     
+    console.log("Stopping timer and calculating results...");
     setIsTimerRunning(false);
     
     const dist = calculateDistance(
@@ -329,45 +329,45 @@ function App() {
     
     setDistance(dist);
     setAiDistance(aiDist);
-    setScore(score + roundScore);
-    setAiScore(aiScore + aiRoundScore);
-    setTotalGuesses(totalGuesses + 1);
+    setScore(prevScore => prevScore + roundScore);
+    setAiScore(prevAiScore => prevAiScore + aiRoundScore);
+    setTotalGuesses(prev => prev + 1);
     setShowResults(true);
+    setGameState("results");
   };
 
   // Next round
   const nextRound = () => {
+    console.log("Starting next round...");
+    setShowResults(false);
+    setGameState("playing");
+    setUserGuess({ lat: 0, lng: 0 });
+    setRoundTime(0);
+    setIsTimerRunning(true);
     startGame();
   };
 
   // Back to menu
   const backToMenu = () => {
+    console.log("Going back to menu...");
     setGameState("menu");
     setScore(0);
     setAiScore(0);
     setTotalGuesses(0);
     setCurrentLocation(null);
     setIsTimerRunning(false);
+    setShowResults(false);
+    setUserGuess({ lat: 0, lng: 0 });
+    setRoundTime(0);
   };
 
   // Get current media based on mode
   const getCurrentMedia = () => {
     if (!currentLocation) return null;
     
-    switch(selectedMode) {
-      case "easy":
-        // Use street view for easy mode instead of non-location-specific videos
-        return null; // Street view will be handled in the render
-      case "medium":
-        return currentLocation.images[currentMediaIndex % currentLocation.images.length];
-      case "hard":
-        return currentLocation.images[currentMediaIndex % currentLocation.images.length];
-      case "impossible":
-        // Return blurred version for impossible mode
-        return currentLocation.images[currentMediaIndex % currentLocation.images.length];
-      default:
-        return currentLocation.images[0];
-    }
+    // Always use images for all modes now - more reliable
+    const imageIndex = currentMediaIndex % currentLocation.images.length;
+    return currentLocation.images[imageIndex];
   };
 
   // Timer effect
@@ -527,7 +527,12 @@ function App() {
                     maxWidth: '600px', 
                     height: 'auto', 
                     border: '1px solid #ddd',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    minHeight: '300px',
+                    objectFit: 'cover'
+                  }}
+                  onLoad={(e) => {
+                    console.log("Image loaded successfully:", media);
                   }}
                   onError={(e) => {
                     console.log("Image failed to load:", media);
@@ -535,11 +540,11 @@ function App() {
                     // Show fallback with location name hint
                     const fallback = document.createElement('div');
                     fallback.innerHTML = `
-                      <div style="padding: 40px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px;">
-                        <h3>Image Loading...</h3>
-                        <p>Location: ${currentLocation.name}</p>
-                        <p>Region: ${currentLocation.region}</p>
-                        <p>Please try refreshing the page.</p>
+                      <div style="padding: 40px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
+                        <h3>📍 Location: ${currentLocation.name}</h3>
+                        <p><strong>Country:</strong> ${currentLocation.country}</p>
+                        <p><strong>Region:</strong> ${currentLocation.region}</p>
+                        <p style="margin-top: 20px; font-size: 14px; color: #888;">Image loading issue - but you can still guess based on the location name!</p>
                       </div>
                     `;
                     e.target.parentNode.appendChild(fallback);
@@ -569,6 +574,24 @@ function App() {
                     <p><strong>Hint:</strong> Even with blur, you can see shapes and general layout!</p>
                   )}
                 </div>
+              </div>
+            )}
+            
+            {/* Show loading state if no media */}
+            {currentLocation && !media && (
+              <div style={{ 
+                padding: '40px', 
+                textAlign: 'center', 
+                color: '#666', 
+                background: '#f8f9fa', 
+                borderRadius: '8px',
+                minHeight: '300px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}>
+                <h3>Loading location...</h3>
+                <p>Please wait while we load the location image.</p>
               </div>
             )}
           </div>
@@ -639,7 +662,7 @@ function App() {
   }
 
   // Render results screen
-  if (showResults && currentLocation) {
+  if (gameState === "results" && showResults && currentLocation) {
     const difficulty = modes.find(m => m.key === selectedMode)?.difficulty || 1;
     const roundScore = calculateScore(distance, difficulty);
     const aiRoundScore = calculateScore(aiDistance, difficulty);
